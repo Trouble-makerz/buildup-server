@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tm.project.buildup.global.common.api.BaseResponse;
-import tm.project.buildup.global.common.api.ResponseCode;
 
 import java.time.LocalDateTime;
 
@@ -42,7 +41,7 @@ public class TestController {
 //        system.out.println(sentenceLikeRepository.findByStatus( "A", PageRequest.of(0,1,Sort.by(Sort.Order.desc("id")))).getContent());
 //        sentenceLikeMappings.forEach(system.out::println);
         LocalDateTime now = LocalDateTime.now();
-        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(ResponseCode.TEST,now.toString()));
+        return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>(now.toString()));
     }
 
 }

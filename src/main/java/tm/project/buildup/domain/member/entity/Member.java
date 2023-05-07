@@ -1,6 +1,7 @@
 package tm.project.buildup.domain.member.entity;
 
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,8 @@ import static lombok.AccessLevel.PROTECTED;
 public class Member extends BaseEntity {
     @Column(name = "fcm_id", nullable = false)
     private String fcm_id;
-
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
@@ -35,11 +37,14 @@ public class Member extends BaseEntity {
     private SocialLogin socialLogin;
 
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     List<JobPost> jobCommentList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     List<JobPostComment> jobPostCommentList = new ArrayList<>();
     @OneToMany(mappedBy = "member", cascade = ALL)
+    @Builder.Default
     List<JobPostLike> jobPostLikeList = new ArrayList<>();
 
     public void setSocialLogin(SocialLogin socialLogin) {
