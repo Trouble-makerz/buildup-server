@@ -1,11 +1,16 @@
 package tm.project.buildup.global.common.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import tm.project.buildup.global.common.api.ErrorCode;
+import lombok.Setter;
+import tm.project.buildup.global.common.api.ResponseStatus;
 
 @Getter
-@AllArgsConstructor
+@Setter
 public class BaseException extends RuntimeException {
-    private final ErrorCode errorCode;
+    private ResponseStatus status;
+
+    public BaseException(ResponseStatus status) {
+        super(status.getMessage());
+        this.status = status;
+    }
 }

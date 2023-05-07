@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tm.project.buildup.domain.member.entity.Member;
 import tm.project.buildup.domain.member.repository.MemberEntityRepository;
-import tm.project.buildup.global.common.api.ErrorCode;
 import tm.project.buildup.global.common.exception.BaseException;
+
+import static tm.project.buildup.global.common.api.ResponseStatus.NOT_FIND_USER;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         Member member = memberEntityRepository.findById(Long.parseLong(username))
-                .orElseThrow(() -> new BaseException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         return User.withUsername(username)
                 .password(member.getId().toString())
                 .authorities(AuthorityUtils.NO_AUTHORITIES)
