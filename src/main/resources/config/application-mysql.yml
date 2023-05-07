@@ -14,7 +14,7 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: ENC(HB+BkYU7fCeSlhYumIHr8sTj5V6tgTNvCTcjT9zSbXvnyJ52UUy7Zla8VE2xU1MCwjrljQP5emw3Joru1EQDy3alMHf1ry6Wztphd/BLzfFFSy1zlNH2C/90es9Y275U1Ghp3jLWif9dtQMRquPyS5ojpe0bA+IMmOdYPl+lCWXUl096BMyiP4F2LjbY8G70JWsfIwCmA83bADdUxZEkOohdDePoABF7wMIhmmqFtLPJMK4hRMf3RNWyxjcm5bl8vHiC8ZQxp2hnIMcp/1kiEA==)
-    username: ENC(AbBUeOQseTvNxj0o/TE0SQ==)
-    password: ENC(u5ytEEG40z8d8uXIu5p9Gfb8Zwmj89ldwXQAgupLu5k=)
+    url: ENC(80vjjoFrw+JFe2P+4I7KSu+sErvcnedbz9elsH+9imQ0UfdmfMNfSAP7tC+xJOhMp/uf94+WSZWEN07wjpZ6yVPkgAox2KhhtXugBaYFfOdVLx+QjZgrRnUe0/qUSFG9/FIQz/GyiMcFYuuwg5k3qEopoDVGe72/NSodV+KytUF0sDCOeyk7SMBagWvGUF++F7rMw7KD8V0CmI+OK62P0GT8Z6haEn/LacRzSOjy0L/+YBV5EbHmMEFDqAzotvrBlSnOqejjsv+vInHqRFxT+nfyKFll/KHx)
+    username: ENC(xLnpevwl7rt89CRTP8dedg==)
+    password: ENC(vWLmaIfpeq00UE8/uUOSA756l9Rm+eM/GAvXuU2HInE=)
     driver-class-name: com.mysql.cj.jdbc.Driver
