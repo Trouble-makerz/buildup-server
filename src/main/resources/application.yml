@@ -11,4 +11,5 @@ spring:
       - redis
       - jasypt
       - mysql
+      - swagger
     active: local
