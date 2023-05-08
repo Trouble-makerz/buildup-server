@@ -13,11 +13,6 @@ import java.util.TimeZone;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableScheduling
-@OpenAPIDefinition(
-        servers = {
-                @Server(url = "/", description = "Default Server url")
-        }
-)
 public class BuildupApplication {
     @PostConstruct
     public void startedTimeZoneSet() {
