@@ -11,4 +11,6 @@ public interface JobPostService {
     void creatJobPost(CreateJobPostDto createJobPostDto);
 
     List<GetJobPostListRes> getJobPostList(GetJobPostListDto purpose);
+
+    void likePost(Long postId, Long userId);
 }

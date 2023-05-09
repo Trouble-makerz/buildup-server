@@ -12,6 +12,8 @@ import tm.project.buildup.domain.jobPost.model.serviceDto.GetJobPostListDto;
 import tm.project.buildup.domain.jobPost.repository.JobPostLikeRepository;
 import tm.project.buildup.domain.jobPost.repository.JobPostRepository;
 import tm.project.buildup.domain.member.MemberService;
+import tm.project.buildup.domain.member.entity.Member;
+import tm.project.buildup.global.common.exception.BaseException;
 
 import java.awt.print.Pageable;
 import java.time.LocalDateTime;
@@ -20,7 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static tm.project.buildup.global.common.api.ResponseStatus.NOT_FIND_POST;
 import static tm.project.buildup.global.common.entity.BaseEntity.State.ACTIVE;
+import static tm.project.buildup.global.common.entity.BaseEntity.State.INACTIVE;
 
 @Transactional
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class JobPostServiceImpl implements JobPostService {
     private final MemberService memberService;
     private final JobPostRepository jobPostRepository;
     private final JobPostLikeRepository jobPostLikeRepository;
+
     @Override
     public void creatJobPost(CreateJobPostDto createJobPostDto) {
         JobPost jobPost = JobPost.builder()
@@ -44,13 +49,12 @@ public class JobPostServiceImpl implements JobPostService {
     @Override
     @Transactional(readOnly = true)
     public List<GetJobPostListRes> getJobPostList(GetJobPostListDto getJobPostListDto) {
-        System.out.println(getJobPostListDto.toString());
         PageRequest pageRequest = PageRequest.of(getJobPostListDto.getPage(), getJobPostListDto.getSize());
-        List<JobPost> jobPostList = jobPostRepository.findByState(ACTIVE,pageRequest);
+        List<JobPost> jobPostList = jobPostRepository.findByState(ACTIVE, pageRequest);
         return jobPostList.stream()
                 .map(jobPost -> GetJobPostListRes.builder()
                         .id(jobPost.getId())
-                        .feedLikeSelf(checkLikeJobPost(getJobPostListDto.getId(),jobPost.getId()))
+                        .feedLikeSelf(checkLikeJobPost(getJobPostListDto.getId(), jobPost.getId()))
                         .userName(jobPost.getMember().getNickname())
                         .viewCount(jobPost.getViewCount())
                         .jobPostTime(convertTime(jobPost.getCreatedAt()))
@@ -58,10 +62,35 @@ public class JobPostServiceImpl implements JobPostService {
                         .content(jobPost.getContent())
                         .build()).collect(Collectors.toList());
     }
-    private boolean checkLikeJobPost(Long userId,Long jobPostId){
+
+    @Override
+    public void likePost(Long postId, Long memberId) {
+        Member member = memberService.getMember(memberId);
+        JobPost jobPost = jobPostRepository.findByIdAndMemberIdAndState(postId, memberId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_POST));
+        Optional<JobPostLike> jobPostLikeOptional = jobPostLikeRepository.findByJobPostIdAndMemberId(postId, memberId);
+        //좋아요가 존재
+        if (jobPostLikeOptional.isPresent()) {
+            //좋아요가 활동중인지
+            if (jobPostLikeOptional.get().getState().equals(ACTIVE)) {
+                jobPostLikeOptional.get().updateState(INACTIVE);
+                //비활동중인지
+            } else {
+                jobPostLikeOptional.get().updateState(ACTIVE);
+            }
+            //좋아요가 존재하지 않음
+        } else {
+            JobPostLike jobPostLike = JobPostLike.builder()
+                    .member(member).build();
+            jobPost.addLikeJobPost(jobPostLike);
+        }
+    }
+
+    private boolean checkLikeJobPost(Long userId, Long jobPostId) {
         Optional<JobPostLike> feedLike = jobPostLikeRepository.findByJobPostIdAndMemberIdAndState(jobPostId, userId, ACTIVE);
         return feedLike.isPresent();
     }
+
     public String convertTime(LocalDateTime time) {
         final int SEC = 60;
         final int MIN = 60;

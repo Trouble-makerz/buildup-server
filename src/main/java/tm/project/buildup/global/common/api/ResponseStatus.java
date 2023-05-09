@@ -38,7 +38,7 @@ public enum ResponseStatus {
     OVER_IMAGE(false,432,"이미지는 최대 10개까지 입니다."),
     TEXT_LENGTH_ERROR(false, 433, "피드는 1자 이상 2200자 이하입니다."),
     NOT_USER_FEED(false,431,"유저의 피드가 아닙니다."),
-    NOT_FIND_FEED(false,430, "피드를 찾을 수 없습니다."),
+    NOT_FIND_POST(false,430, "게시글을 찾을 수 없습니다."),
     //댓글 450
     NOT_FIND_COMMENT(false,450, "댓글을 찾을 수 없습니다."),
     NOT_USER_COMMENT(false,453,"유저의 댓글이 아닙니다."),

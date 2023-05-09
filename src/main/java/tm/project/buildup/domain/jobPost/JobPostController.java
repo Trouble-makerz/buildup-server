@@ -22,6 +22,7 @@ import tm.project.buildup.domain.jobPost.model.response.GetJobPostListRes;
 import tm.project.buildup.domain.jobPost.model.serviceDto.CreateJobPostDto;
 import tm.project.buildup.domain.jobPost.model.serviceDto.GetJobPostListDto;
 import tm.project.buildup.global.common.api.BaseResponse;
+import tm.project.buildup.global.common.exception.BaseException;
 
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class JobPostController {
     @Parameter(name = "id", description = "(임시) member id", in = ParameterIn.HEADER)
     @PostMapping(value = "/create")
     public ResponseEntity<BaseResponse<String>> creatJobPost(@Validated @RequestBody CreateJobPostReq createJobPostReq) {
-        Long id = Long.valueOf(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getHeader("id"));
-        jobPostService.creatJobPost(new CreateJobPostDto(id, createJobPostReq));
+        Long userId = Long.valueOf(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getHeader("id"));
+        jobPostService.creatJobPost(new CreateJobPostDto(userId, createJobPostReq));
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(SUCCESS));
     }
 
@@ -51,10 +52,21 @@ public class JobPostController {
     public ResponseEntity<BaseResponse<List<GetJobPostListRes>>> getJobPostList(@Parameter(name = "purpose", description = "blame 의 id", in = ParameterIn.PATH) @PathVariable Purpose purpose,
                                                                                 @Parameter(name = "page", description = " 페이지 0이상", in = ParameterIn.QUERY) @RequestParam(required = false) Integer page,
                                                                                 @Parameter(name = "size", description = "페이지 사이즈 1이상", in = ParameterIn.QUERY) @RequestParam(required = false) Integer size) {
-        Long id = Long.valueOf(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getHeader("id"));
-        GetJobPostListDto getJobPostListDto = new GetJobPostListDto(purpose,page,size,id);
-        System.out.println(purpose+" "+page+" "+size+" "+id);
+        Long userId = Long.valueOf(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getHeader("id"));
+        GetJobPostListDto getJobPostListDto = new GetJobPostListDto(purpose,page,size,userId);
         List<GetJobPostListRes> getJobPostListResList = jobPostService.getJobPostList(getJobPostListDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponse<>(getJobPostListResList));
+    }
+    @Operation(summary = "게시글 좋아요")
+    @PostMapping("/{postId}/like")
+    @Parameter(name = "id", description = "(임시) member id", in = ParameterIn.HEADER)
+    public ResponseEntity<BaseResponse<String>> likePost(@Parameter(name = "postId", description = "feed 의 id", in = ParameterIn.PATH) @PathVariable Long postId) {
+        try {
+            Long userId = Long.valueOf(((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getHeader("id"));
+            jobPostService.likePost(postId,userId);
+            return ResponseEntity.status(HttpStatus.OK).body(new BaseResponse<>("성공"));
+        } catch (BaseException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseResponse<>(e.getStatus()));
+        }
     }
 }

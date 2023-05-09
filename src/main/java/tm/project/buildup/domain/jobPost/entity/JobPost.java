@@ -52,4 +52,9 @@ public class JobPost extends BaseEntity {
     public enum Purpose {
         JOB,PERSON;
     }
+
+    public void addLikeJobPost(JobPostLike jobPostLike) {
+        jobPostLikeList.add(jobPostLike);
+        jobPostLike.setJobPost(this);
+    }
 }

@@ -26,4 +26,12 @@ public class JobPostLike extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "job_post_id")
     JobPost jobPost;
+
+    public void setJobPost(JobPost jobPost) {
+        this.jobPost = jobPost;
+    }
+
+    public void updateState(State state) {
+        this.state = state;
+    }
 }
