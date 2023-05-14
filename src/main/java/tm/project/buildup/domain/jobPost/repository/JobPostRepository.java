@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface JobPostRepository extends JpaRepository<JobPost,Long> {
     List<JobPost> findByState(BaseEntity.State active, PageRequest pageRequest);
 
-    Optional<JobPost> findByIdAndMemberIdAndState(Long postId, Long userId, BaseEntity.State state);
+    Optional<JobPost> findByIdAndState(Long postId, BaseEntity.State state);
 }

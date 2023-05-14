@@ -5,17 +5,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tm.project.buildup.domain.jobPost.entity.JobPost;
+import tm.project.buildup.domain.jobPost.entity.JobPostComment;
+import tm.project.buildup.domain.jobPost.entity.JobPostImage;
 import tm.project.buildup.domain.jobPost.entity.JobPostLike;
+import tm.project.buildup.domain.jobPost.model.response.GetJobPostCommentListRes;
+import tm.project.buildup.domain.jobPost.model.response.GetJobPostDetailsRes;
 import tm.project.buildup.domain.jobPost.model.response.GetJobPostListRes;
 import tm.project.buildup.domain.jobPost.model.serviceDto.CreateJobPostDto;
 import tm.project.buildup.domain.jobPost.model.serviceDto.GetJobPostListDto;
+import tm.project.buildup.domain.jobPost.repository.JobPostCommentRepository;
+import tm.project.buildup.domain.jobPost.repository.JobPostImageRepository;
 import tm.project.buildup.domain.jobPost.repository.JobPostLikeRepository;
 import tm.project.buildup.domain.jobPost.repository.JobPostRepository;
 import tm.project.buildup.domain.member.MemberService;
 import tm.project.buildup.domain.member.entity.Member;
+import tm.project.buildup.global.common.entity.BaseEntity;
 import tm.project.buildup.global.common.exception.BaseException;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -33,9 +39,12 @@ public class JobPostServiceImpl implements JobPostService {
     private final MemberService memberService;
     private final JobPostRepository jobPostRepository;
     private final JobPostLikeRepository jobPostLikeRepository;
-
+    private final JobPostCommentRepository jobPostCommentRepository;
+    private final JobPostImageRepository jobPostImageRepository;
     @Override
     public void creatJobPost(CreateJobPostDto createJobPostDto) {
+        JobPostImage jobPostImage = JobPostImage.builder()
+                .url(createJobPostDto.getImageUrl()).build();
         JobPost jobPost = JobPost.builder()
                 .content(createJobPostDto.getContent())
                 .title(createJobPostDto.getTitle())
@@ -43,6 +52,7 @@ public class JobPostServiceImpl implements JobPostService {
                 .purpose(createJobPostDto.getPurpose())
                 .jobPostTarget(createJobPostDto.getJobPostTarget())
                 .member(memberService.getMember(createJobPostDto.getId())).build();
+        jobPost.addImage(jobPostImage);
         jobPostRepository.save(jobPost);
     }
 
@@ -66,7 +76,7 @@ public class JobPostServiceImpl implements JobPostService {
     @Override
     public void likePost(Long postId, Long memberId) {
         Member member = memberService.getMember(memberId);
-        JobPost jobPost = jobPostRepository.findByIdAndMemberIdAndState(postId, memberId, ACTIVE)
+        JobPost jobPost = jobPostRepository.findByIdAndState(postId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_POST));
         Optional<JobPostLike> jobPostLikeOptional = jobPostLikeRepository.findByJobPostIdAndMemberId(postId, memberId);
         //좋아요가 존재
@@ -84,6 +94,49 @@ public class JobPostServiceImpl implements JobPostService {
                     .member(member).build();
             jobPost.addLikeJobPost(jobPostLike);
         }
+    }
+
+    @Override
+    public void createComment(Long postId, Long memberId, String content) {
+        Member member = memberService.getMember(memberId);
+        JobPost jobPost = jobPostRepository.findByIdAndState(postId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_POST));
+        JobPostComment jobPostComment = JobPostComment.builder()
+                .content(content)
+                .build();
+        jobPost.addJobPostComment(jobPostComment);
+        member.addJobPostComment(jobPostComment);
+    }
+
+    @Override
+    public GetJobPostDetailsRes jobPostDetail(Long postId) {
+        JobPost jobPost = jobPostRepository.findByIdAndState(postId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_POST));
+        JobPostImage jobPostImage = jobPostImageRepository.findByJobPostIdAndState(postId,ACTIVE);
+        jobPost.addViewCount();
+        return GetJobPostDetailsRes.builder()
+                .jobPostTime(convertTime(jobPost.getCreatedAt()))
+                .content(jobPost.getContent())
+                .imageUrl(jobPostImage.getUrl())
+                .commentNum((long) jobPost.getJobPostCommentList().size())
+                .likeNum((long) jobPost.getJobPostLikeList().size())
+                .nickname(jobPost.getMember().getNickname())
+                .viewCount(jobPost.getViewCount())
+                .title(jobPost.getTitle()).build();
+    }
+
+    @Override
+    public List<GetJobPostCommentListRes> getCommentList(Long postId, Integer page, Integer size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        JobPost jobPost = jobPostRepository.findByIdAndState(postId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_POST));
+        List<JobPostComment> jobPostCommentList = jobPostCommentRepository.findByJobPostIdAndState(postId, ACTIVE,pageRequest);
+        return jobPostCommentList.stream()
+                .map(jobPostComment -> GetJobPostCommentListRes.builder()
+                        .name(jobPostComment.getMember().getNickname())
+                        .content(jobPostComment.getContent())
+                        .time(convertTime(jobPostComment.getCreatedAt()))
+                        .build()).collect(Collectors.toList());
     }
 
     private boolean checkLikeJobPost(Long userId, Long jobPostId) {

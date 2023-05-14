@@ -29,4 +29,12 @@ public class JobPostComment extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     Member member;
+
+    public void setMember(JobPost jobPost) {
+        this.jobPost = jobPost;
+    }
+
+    public void setJobPost(Member member) {
+        this.member = member;
+    }
 }

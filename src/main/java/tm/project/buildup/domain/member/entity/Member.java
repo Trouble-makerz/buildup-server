@@ -51,4 +51,9 @@ public class Member extends BaseEntity {
         this.socialLogin = socialLogin;
         socialLogin.setMember(this);
     }
+
+    public void addJobPostComment(JobPostComment jobPostComment) {
+        this.jobPostCommentList.add(jobPostComment);
+        jobPostComment.setJobPost(this);
+    }
 }
