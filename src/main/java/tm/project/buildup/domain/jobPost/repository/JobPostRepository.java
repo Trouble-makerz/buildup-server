@@ -7,8 +7,11 @@ import tm.project.buildup.domain.jobPost.entity.JobPost;
 import tm.project.buildup.global.common.entity.BaseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JobPostRepository extends JpaRepository<JobPost,Long> {
     List<JobPost> findByState(BaseEntity.State active, PageRequest pageRequest);
+
+    Optional<JobPost> findByIdAndState(Long postId, BaseEntity.State state);
 }

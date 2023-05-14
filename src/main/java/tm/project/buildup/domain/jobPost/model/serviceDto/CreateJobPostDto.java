@@ -18,6 +18,7 @@ public class CreateJobPostDto {
     Long id;
     String title;
     String content;
+    String imageUrl;
     JobPostTarget jobPostTarget;
     JobPost.Purpose purpose;
 
@@ -25,6 +26,7 @@ public class CreateJobPostDto {
         this.id =id;
         this.title = createJobPostReq.getTitle();
         this.content = createJobPostReq.getContent();
+        this.imageUrl = createJobPostReq.getImageUrl();
         this.jobPostTarget = createJobPostReq.getJobPostTarget();
         this.purpose = createJobPostReq.getPurpose();
     }

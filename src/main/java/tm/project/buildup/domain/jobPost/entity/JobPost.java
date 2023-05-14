@@ -49,7 +49,25 @@ public class JobPost extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "member_id")
     Member member;
+
+    public void addImage(JobPostImage jobPostImage) {
+        this.jobPostImageList.add(jobPostImage);
+        jobPostImage.setJobPost(this);
+    }
+
     public enum Purpose {
         JOB,PERSON;
+    }
+
+    public void addLikeJobPost(JobPostLike jobPostLike) {
+        jobPostLikeList.add(jobPostLike);
+        jobPostLike.setJobPost(this);
+    }
+    public void addJobPostComment(JobPostComment jobPostComment) {
+        this.jobPostCommentList.add(jobPostComment);
+        jobPostComment.setMember(this);
+    }
+    public void addViewCount(){
+        this.viewCount+=1;
     }
 }

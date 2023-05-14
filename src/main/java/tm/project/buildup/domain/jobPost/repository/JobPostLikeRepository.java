@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface JobPostLikeRepository extends JpaRepository<JobPostLike,Long> {
     Optional<JobPostLike> findByJobPostIdAndMemberIdAndState(Long jobPostId, Long userId, BaseEntity.State active);
+
+    Optional<JobPostLike> findByJobPostIdAndMemberId(Long postId, Long memberId);
 }

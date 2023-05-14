@@ -25,4 +25,8 @@ public class JobPostImage extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "job_post_id")
     JobPost jobPost;
+
+    public void setJobPost(JobPost jobPost) {
+        this.jobPost = jobPost;
+    }
 }

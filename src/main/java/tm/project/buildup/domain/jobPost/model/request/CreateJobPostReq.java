@@ -29,4 +29,7 @@ public class CreateJobPostReq {
     @NotNull(message = "null 안됩니다.")
     @Schema(description = "목표", example = "JOB(구직),PERSON(구인)")
     Purpose purpose;
+    @NotNull(message = "null 안됩니다.")
+    @Schema(description = "이미지 주소", example = "https://firebasestorage.googleapis.com/iufhgoisfhgoishof.jpg")
+    String imageUrl;
 }

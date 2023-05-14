@@ -11,4 +11,6 @@ spring:
       - redis
       - jasypt
       - mysql
+      - swagger
+      - slack
     active: local
